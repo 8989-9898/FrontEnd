@@ -61,3 +61,35 @@ const buf11 = Buffer.from(' nodejs');
 // 缓存合并，可以合并多个，第一个参数是需要合并的缓存，第二个参数是合并出的新的缓冲的大小
 const buf12 = Buffer.concat([buf10, buf11]);
 console.log(buf12.toString());
+
+// 缓存区比较
+var buf13 = Buffer.from('abcd');
+var buf14 = Buffer.from('bcd');
+// 返回一个数字，表示 buf13 在 buf14 之前，之后或者相等
+var length = buf13.compare(buf14);
+if (length < 0) {
+    console.log(buf13 + '在' + buf14 + '之前');
+} else if (length == 0) {
+    console.log(buf13 + '在' + buf14 + '相同');
+} else {
+    console.log(buf13 + '在' + buf14 + '之后');
+}
+
+
+// 缓存区拷贝
+var buf15 = Buffer.from('asdfasdfwer');
+var buf16 = Buffer.from('QWER');
+// 第一个参数是要拷贝到的缓存区。 第二个参数是要拷贝到的位置，默认0。 第三个参数是拷贝缓存区的开始位置，默认0。 第四个参数是拷贝缓存区的结束位置，默认是全部
+// 拷贝到第二个位置开始
+buf16.copy(buf15, 2);
+console.log(buf15.toString()); // asQWERdfwer
+
+// 剪切缓存区
+var buf17 = Buffer.from('flank lin');
+// 第一个参数是开始剪切的位置，默认0。 第二个参数是剪切结束的位置，默认全部。  裁剪功能返回的实际是原始缓存区 buffer 或者一部分，操作的是与原始 buffer 同一块内存区域。
+var buf18 = buf17.slice(0, 2);
+console.log(buf18.toString());// fl
+
+// 缓存区长度
+var buf19 = Buffer.from('flank lin');
+console.log(buf19.length);
