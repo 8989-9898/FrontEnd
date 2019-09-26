@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>测试function的 Arguments </title>
+</head>
+
+<body>
+    <p>查找最大数</p>
+    <p id="max"></p>
+    <p>和数</p>
+    <p id="sum"></p>
+
+    <button onclick="add();">计数</button>
+    <p id="count"></p>
+    <script>
+
+        var add = (function () {
+            var counter = 0;
+            return function () {
+                counter++;
+                document.getElementById('count').innerText = counter;
+            };
+        })();
+
+        function findMax() {
+            var max = arguments[0];
+            for (let i = 0; i < arguments.length; i++) {
+                if (max < arguments[i]) {
+                    max = arguments[i];
+                }
+            }
+            return max;
+        }
+        document.getElementById('max').innerText = findMax(1, 123, 500, 115, 44, 88);
+        function sumAll() {
+            var sum = 0;
+            for (let i = 0; i < arguments.length; i++) {
+                sum += arguments[i];
+
+            }
+            return sum;
+        }
+        document.getElementById("sum").innerText = sumAll(1, 123, 500, 115, 44, 88);
+    </script>
+</body>
+
+</html>
