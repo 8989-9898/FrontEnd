@@ -1,0 +1,1 @@
+通fs模块的writeFile异步写入文件
