@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>react的原生渲染</title>
+
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="example"></div>
+    <div id="time"></div>
+    <div id="time2"></div>
+    <div id="time3"></div>
+
+    <script type="text/babel">
+        ReactDOM.render(<h1>hello world</h1>,document.getElementById('example'));
+
+        function tick() {
+            const element = (
+                <div>
+                    <h1>hello, world!</h1>
+                    <h2>It is {new Date().toLocaleTimeString()}.</h2>
+                </div>
+            );
+            ReactDOM.render(
+                element,
+                document.getElementById('time')
+            );
+        }
+        setInterval(tick, 1000);
+
+        function Clock(props) {
+            return (
+                <div>
+                    <h1>hello, world!</h1>
+                    <h2>It is {props.date.toLocaleTimeString()}.</h2>
+                </div>
+            );
+        }
+
+        function time() {
+            ReactDOM.render(
+                <Clock date={new Date()} />, // 调用函数 Clock 传入参数 date
+                document.getElementById('time2')
+                );
+        }
+        setInterval(time, 1000);
+
+        // 使用创建一个 React.Component 的 ES6 类，封装要展示的类
+        class Clock1 extends React.Component{
+            render(){
+                return (
+                    <div><h1>hello world</h1><h2>It is {this.props.date.toLocaleTimeString()}.</h2></div>
+                );
+            }
+        }
+
+        function time3() {
+            ReactDOM.render(
+                <Clock1 date={new Date()}/>,
+                document.getElementById('time3')
+            );
+        }
+
+        setInterval(time3, 1000);
+    </script>
+</body>
+
+</html>
