@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>使用 react 的 jsx </title>
+
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .red {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="hello"></div>
+    <div id="add"></div>
+    <div id="conditional"></div>
+    <div id="style"></div>
+    <div id="arr"></div>
+    <div id="format"></div>
+    <div id="element1"></div>
+    <div id="element2"></div>
+    <script type="text/babel">
+        // 使用 jsx 语法，自定义的属性需要使用 data- 开头，使用
+        const HELLO=<h1 className='red' data-myValue='使用自定义的属性'>hello world</h1>;
+
+        ReactDOM.render(
+            HELLO,
+            document.getElementById('hello')
+        );
+
+        // 使用表达式 必须写在 {} 里
+        const add=<div><h1>{1+1}</h1></div>;
+        ReactDOM.render(add,document.getElementById('add'));
+
+        // 在 jsx 内不能使用 if else 语句，可以使用三元表达式
+        const I=1;
+        const CONDITIONAL=<div><h2>{I==1?'true':'false'}</h2></div>;
+        ReactDOM.render(CONDITIONAL,document.getElementById('conditional'));
+
+        // 使用样式
+        var style={
+            fontSize:100,// React 会自动在元素数字后面添加 px
+            color:'#FF0000'
+        }
+            
+        var myStyle=<h1 style={style}>使用样式{/*注释要写在 {} 中 */}</h1>;
+        ReactDOM.render(
+            myStyle, 
+            document.getElementById('style'));
+
+        // 在 jsx 中使用数组
+        var arr=[
+            <h1>hello world</h1>,
+            <h2>学习 react 进行中</h2>
+        ];
+
+        ReactDOM.render(
+            <div>{arr}{/* 数组会自动展开所有的元素 */}</div>,
+            document.getElementById('arr')
+        );
+
+        // 使用对象
+        var user={
+            name:'flank',
+            age:30,
+            gender:'man'
+        }
+
+
+        function format(user) {
+            return user.name+' '+user.age+' '+user.gender;
+        }
+
+        ReactDOM.render(
+            <div tabIndex='0' title={user.name}>{format(user)},<h1>{user.name}</h1></div>,
+            document.getElementById('format')
+        );
+
+        // babel 会将 jsx 语句转换为 React.createElement() 函数调用
+        var element1=(
+            <h1 className='greeting'>
+                hello,world
+            </h1>
+        );
+
+        var element2=React.createElement(
+            'h1',
+            {className:'greeting'},
+            'hello,world'
+        );
+        // 以上的两种写法一致
+        ReactDOM.render(
+            element1,
+            document.getElementById('element1')
+        );
+
+        ReactDOM.render(
+            element2,
+            document.getElementById('element2')
+        );
+    </script>
+</body>
+
+</html>
