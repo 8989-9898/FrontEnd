@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>使用react 的组件</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="fun"></div>
+    <div id="welcome"></div>
+    <div id="combination"></div>
+    <div id="author"></div>
+    <script type="text/babel">
+
+
+        // 使用自定义的函数组件 ，自定义的组件名称必须一大写字母开头，因为 react 会将小写字母开头的组件视为原生的 DOM 标签
+        function Fun(props) {
+            return <h1>hello {props.name}</h1>;
+        }
+        ReactDOM.render(
+            <Fun name='flank'/>,
+            document.getElementById('fun')
+        );
+        // 使用 ES6 的 class 来定义组件
+        class Welcome extends React.Component {
+            render(){
+                return <h1>hello,{this.props.name}</h1>
+            }
+        }
+        ReactDOM.render(
+            <Welcome name='flank'/>,
+            document.getElementById('welcome')
+        );
+
+        // 使用自定义组件的时候，会将 jsx 接收的属性转换为单个的对象传递给组件，这个对象被称之为 props
+
+        // 使用组合组件
+        function App(props) {
+            return (
+                <div>
+                    <Fun name='flank'/>
+                    <Fun name='Cahal' />
+                    <Fun name='edite' />
+                </div>
+            )
+        }
+
+        ReactDOM.render(
+            <App/>,
+            document.getElementById('combination')
+        );
+
+
+        // 提取组件，将以下复杂不易维护的组件进行简化提取
+
+        // function Comment(props) {
+        //     return (
+        //     <div className="Comment">
+        //         <div className="UserInfo">
+        //             <img className="Avatar" src={props.author.avatarUrl} alt={props.author.name} />
+        //             <div className="UserInfo-name">
+        //                 {props.author.name}
+        //             </div>
+        //         </div>
+        //         <div className="Comment-text">
+        //             {props.text}
+        //         </div>
+        //         <div className="Comment-date">
+        //             {formatDate(props.date)}
+        //         </div>
+        //     </div>
+        //     );
+        // }
+
+        function Avatar(props) {
+            return (
+                <img src={props.user.avatarUrl} alt={props.user.name}/>
+            );
+        }
+
+        function UserInfo(props) {
+            return (
+                <div className="UserInfo">
+                <Avatar user={props.user}/>
+                    <div className="UserInfo-name">{props.user.name}</div>
+                </div>
+            );
+        }
+
+
+        function Comment(props) {
+            return (
+            <div className="Comment">
+                <UserInfo user={props.author}/>
+                <div className="Comment-text">
+                    {props.text}
+                </div>
+                <div className="Comment-date">
+                    {props.date}
+                </div>
+            </div>
+            );
+        }
+
+        ReactDOM.render(
+            <Comment author={{'name':'flank','avatarUrl':'./111.jpg'}} text={'这是一个诗人'} date={new
+                Date().toLocaleTimeString()} />,
+            document.getElementById('author')
+        );
+
+
+    </script>
+</body>
+
+</html>
