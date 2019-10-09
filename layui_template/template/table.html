@@ -15,17 +15,17 @@
     <table class="layui-hide" id="test" lay-filter="test"></table>
 
     <script type="text/html" id="toolbarDemo">
-  <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
-  </div>
-</script>
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+            <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+        </div>
+    </script>
 
     <script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
 
 
     <script src="../js/layui/layui.js"></script>
@@ -147,11 +147,13 @@
                 }]
                 , title: '用户数据表'
                 , cols: [[
-                    { type: 'checkbox', fixed: 'left' }
+                    { field: '', title: '序号', fixed: 'left', templet: (res) => { console.log(res.LAY_INDEX); return res.LAY_INDEX; } }
+                    , { type: 'checkbox', fixed: 'left' }
                     , { field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true }
                     , { field: 'username', title: '用户名', width: 120, edit: 'text' }
                     , {
                         field: 'email', title: '邮箱', width: 150, edit: 'text', templet: function (res) {
+                            console.log(res);
                             return '<em>' + res.email + '</em>'
                         }
                     }
