@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>react 的事件处理</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="btn"></div>
+    <div id="toggle"></div>
+    <div id="params"></div>
+    <script type='text/babel'>
+        // 函数的方式进行事件处理
+        function ActionLink() {
+            function handleClick(e) {
+                e.preventDefault();// 阻止事件冒泡，使用 return false; 没用
+                console.log('the link was clicked');
+            }
+
+            return(
+                <div>
+                    <button onClick={handleClick} >{'this clicked'}</button>
+                </div>
+            );
+        }
+
+        ReactDOM.render(
+            <ActionLink/>,
+            document.getElementById('btn')
+        );
+
+        // 使用 ES6 class 定义一个组件的事件处理
+        class Toggle extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={isToggleOn:true,isToggleOn2:true,isToggleOn3:true};
+                // 为了在回调中使用 this ，必须进行绑定
+                this.handleClick=this.handleClick.bind(this);
+            }
+            handleClick(){
+                this.setState({
+                    isToggleOn: !this.state.isToggleOn
+                });
+            }
+
+            // 使用实验性的 class fields 语法绑定 this
+            handleClick2=()=>{
+                this.setState({
+                    isToggleOn2:!this.state.isToggleOn2
+                });
+            }
+
+            // 使用箭头函数的方式绑定 this
+            handleClick3(){
+                this.setState({
+                    isToggleOn3:!this.state.isToggleOn3
+                });
+            }
+
+            render(){
+                return(
+                    <div>
+                        <button onClick={this.handleClick}>{this.state.isToggleOn?'ON':'OFF'}</button>
+                        <button onClick={this.handleClick2}>{this.state.isToggleOn2?'ON':'OFF'}</button>
+                        <button onClick={(e)=>this.handleClick3(e)}>{this.state.isToggleOn3?'ON':'OFF'}</button>
+                    </div>
+                    
+                );
+            }
+        };
+
+        ReactDOM.render(
+            <Toggle/>,
+            document.getElementById('toggle')
+        );
+
+        // 传递参数
+        class Btn extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={name:'hello,flank'};
+            }
+
+            handleClick(name,e){ // 事件对象 e 要放到最后
+                e.preventDefault();
+                alert(name);
+            }
+
+            del(id,e){
+                e.preventDefault();
+                alert(id);
+            }
+
+            render(){
+                return(
+                    <div>
+                    <button onClick={this.handleClick.bind(this,this.state.name)}>click me</button>
+                    <button onClick={(e)=>this.del('this is id 9',e)}>click me</button>                        
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <Btn/>,
+            document.getElementById('params')
+        )
+
+    </script>
+</body>
+
+</html>
