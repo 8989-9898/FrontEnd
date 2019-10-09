@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>react 的条件渲染</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="login"></div>
+    <div id="field"></div>
+    <script type='text/babel'>
+        // 创建两个函数组件
+        function UserGreeting(props) {
+            return <h1>Welcome back!</h1>;
+        }
+        function GuestGreeting(props) {
+            return <h1>Please sign up.</h1>
+        }
+
+        function Greeting(props) {
+            const isLogin = props.isLogin;
+            if (isLogin) { // 通过是否登陆进行不同的信息渲染
+                return <UserGreeting/>
+            } else {
+                return <GuestGreeting/>
+            }
+        }
+
+        ReactDOM.render(
+            <Greeting isLogin={true}/>,
+            document.getElementById('login')
+        )
+
+        // 使用元素变量
+        function LoginButton(props) {
+            return(
+                <button onClick={props.onClick}>Login</button>
+            );
+        }
+
+        function LogoutButton(props) {
+            return(
+                <button onClick={props.onClick}>Logout</button>
+            )
+        }
+
+        class LoginControl extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={isLogin:false};
+            }
+
+            handleLoginClick(){
+                console.log('login');
+                this.setState({
+                    isLogin:true
+                });
+            }
+
+            handleLogoutClick(){
+                console.log('logout');
+                this.setState({
+                    isLogin:false
+                })
+            }
+
+            render(){
+                const isLogin=this.state.isLogin;
+                let elem;
+                if (isLogin) {
+                    elem=<LogoutButton onClick={this.handleLogoutClick.bind(this)}/>
+                } else {
+                    elem=<LoginButton onClick={this.handleLoginClick.bind(this)}/>
+                }
+                return(
+                    <div>
+                        <Greeting isLogin={isLogin}/>
+                        {elem}
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(
+            < LoginControl/>,
+            document.getElementById('field')
+        )
+
+        
+
+    </script>
+</body>
+
+</html>
