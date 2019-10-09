@@ -10,11 +10,18 @@
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
     <!-- 生产环境中不建议使用 -->
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .warning {
+            color: rgb(0, 255, 136);
+        }
+    </style>
 </head>
 
 <body>
     <div id="login"></div>
     <div id="field"></div>
+    <div id="message"></div>
+    <div id="page"></div>
     <script type='text/babel'>
         // 创建两个函数组件
         function UserGreeting(props) {
@@ -71,18 +78,31 @@
                 })
             }
 
+            // render(){
+            //     const isLogin=this.state.isLogin;
+            //     let elem;
+            //     if (isLogin) {
+            //         elem=<LogoutButton onClick={this.handleLogoutClick.bind(this)}/>
+            //     } else {
+            //         elem=<LoginButton onClick={this.handleLoginClick.bind(this)}/>
+            //     }
+            //     return(
+            //         <div>
+            //             <Greeting isLogin={isLogin}/>
+            //             {elem}
+            //         </div>
+            //     );
+            // }
+
+
+            // 三目运算符
             render(){
-                const isLogin=this.state.isLogin;
-                let elem;
-                if (isLogin) {
-                    elem=<LogoutButton onClick={this.handleLogoutClick.bind(this)}/>
-                } else {
-                    elem=<LoginButton onClick={this.handleLoginClick.bind(this)}/>
-                }
+            const isLogin=this.state.isLogin;
                 return(
                     <div>
-                        <Greeting isLogin={isLogin}/>
-                        {elem}
+                        <Greeting isLogin={isLogin} />
+                        {isLogin?(<LogoutButton onClick={this.handleLogoutClick.bind(this)} />):
+                        (<LoginButton onClick={this.handleLoginClick.bind(this)} />)}
                     </div>
                 );
             }
@@ -92,9 +112,62 @@
             < LoginControl/>,
             document.getElementById('field')
         )
+        // 使用运算符 && 
+        function Mailbox(props) {
+            const unreadMessage=props.unreadMessage;
+            return(
+                <div>
+                    <h1>hello</h1>
+                    {unreadMessage.length>0 && <h2>you have {unreadMessage.length } unread message</h2> }
+                </div>
+            )
+        }
 
-        
+        const message=['react','red:react','flank'];
+        ReactDOM.render(
+            <Mailbox unreadMessage={message}/>,
+            document.getElementById('message')
+        )
 
+
+        // 阻止组件渲染
+        function WarningBanner(props) {
+            if (!props.warn) {
+                return null; // 返回 null 阻止组件渲染
+            }
+            return(
+                <div className='warning'>
+                    Warning!
+                </div>
+            )
+        }
+
+        class Page extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={showWarning:true};
+
+            }
+            handleToggleClick(){
+                this.setState({
+                    showWarning: !this.state.showWarning
+                })
+            }
+
+            render(){
+                return(
+                    <div>
+                        <button onClick={this.handleToggleClick.bind(this)}>{this.state.showWarning?'hide':'show'}</button>
+                        <WarningBanner warn={this.state.showWarning}/>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <Page/>,
+            document.getElementById('page')
+        )
     </script>
 </body>
 
