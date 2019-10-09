@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>react 的 state&生命周期</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="time"></div>
+    <div id="time2"></div>
+    <div id="time3"></div>
+    <div id="time4"></div>
+    <div id="time5"></div>
+    <div id="time6"></div>
+    <div id="app"></div>
+    <script type='text/babel'>
+        // 没有封装的组件
+        function tick() {
+            const element=(
+                <div>
+                    <h1>hello,world</h1>    
+                    <h2>{new Date().toLocaleString()}</h2>
+                </div>
+            );
+            ReactDOM.render(
+                element,
+                document.getElementById('time')
+            );
+        }
+        setInterval(tick, 1000);
+
+        // 将表格的外观
+        function Clock(props) {
+            return (
+                <div>
+                    <h1>hello,world</h1>    
+                    <h2>{props.date.toLocaleString()}</h2>
+                </div>
+            );
+        }
+
+        function tick2() {
+            ReactDOM.render(
+                <Clock date={new Date()}/>,
+                document.getElementById('time2')
+            )
+        }
+        setInterval(tick2,1000);
+
+       
+        // 使用 class 组件
+        class Clock2 extends React.Component{
+            render(){
+                return (
+                    <div style={{color:'red'}}>
+                        <h1>hello,world</h1>
+                        <h2>{this.props.date.toLocaleTimeString()}</h2>
+                    </div>
+                )
+            }
+        }
+        setInterval(() => {
+            ReactDOM.render(
+                <Clock2 date={new Date()}/>,
+                document.getElementById('time3')
+
+            )
+        }, 1000);
+        
+        // 使用局部变量 state
+        class Clock3 extends React.Component{
+            // 使用构造方法将 props 转递到父类中
+            constructor(props){
+                super(props);
+                this.state={date:new Date()};
+            }
+            render(){
+                return (
+                    <div style={{color:'yellow'}}>
+                        <h1>hello,world</h1>
+                        <h2>{this.state.date.toLocaleTimeString()}</h2>
+                    </div>
+                );
+            }
+        }
+        setInterval(() => {
+            ReactDOM.render(
+                <Clock3/>,
+                document.getElementById('time4')
+            );
+        }, 1000);
+
+        //添加生命周期的方法
+        class Clock4 extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={date:new Date()};
+            }
+            // 当组件第一次加载的时候执行，在 react 中称之为挂载 mount
+            componentDidMount(){
+                this.timerID=setInterval(() => this.tick(), 1000);
+            }
+            // 当组件被清除时执行，在 react 中称之为卸载 unmount
+            componentWillUnmount(){
+                clearInterval(this.timerID);
+            }
+
+            tick(){
+                this.setState({
+                    date:new Date()
+                })
+            }
+
+            render(){
+                return(
+                    <div style={{color:'orange'}}>
+                        <h1>hello,world</h1>
+                        <h2>{this.state.date.toLocaleTimeString()}</h2>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <Clock4 />,
+            document.getElementById('time5')
+        );
+
+        // state 和 props 时异步更新的
+
+
+        // 数据时自顶向下流动
+        function FormatDate(props) {
+            return (
+                <h2>{props.date.toLocaleString()}</h2>
+            );
+        }
+
+        class Clock5 extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={date:new Date()};
+            }
+
+            componentDidMount(){
+                this.timerID = setInterval(() =>this.tick(), 1000);
+            }
+
+            componentWillUnmount(){
+                clearInterval(this.timerID);
+            }
+
+            tick(){
+                this.setState({
+                    date:new Date()
+                });
+            }
+
+            render(){
+                return (
+                    <div style={{color:'gray'}}>
+                        <h1>hello,world</h1>
+                        <FormatDate date={this.state.date} />
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(
+            <Clock5 />,
+            document.getElementById('time6')
+        );
+
+        function App() {
+            return(
+                <div>
+                    <Clock3 />
+                    <Clock4 />
+                    <Clock5 />
+                </div>
+                
+            );
+        }
+
+        ReactDOM.render(
+            <App/>,
+            document.getElementById('app')
+        );
+
+    </script>
+</body>
+
+</html>
