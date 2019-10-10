@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>表单</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="idName"></div>
+    <div id="message"></div>
+    <div id="select"></div>
+    <div id="reservation"></div>
+    <script type="text/babel">
+
+        // 使用受控组件 input textarea select
+        class NameForm extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={value:""};
+            }
+            handleChange(event){
+                this.setState({value:event.target.value})
+            }
+            handleSubmit(event){
+                alert('提交的名称：'+this.state.value);
+                event.preventDefault();
+            }
+
+            render(){
+                return (
+                    <form onSubmit={this.handleSubmit.bind(this)}>
+                        <label>
+                            名字：<input type="text" value={this.state.value} onChange={this.handleChange.bind(this)}/>
+                        </label>
+                        <input type="submit" value='提交'/>
+                        <div>{this.state.value}</div>
+                    </form>
+                );
+            }
+        }
+        ReactDOM.render(
+            <NameForm/>,
+            document.getElementById('idName')
+        )
+
+        // 使用 textarea
+        class Content extends React.Component{
+            render(){
+                return (
+                    <div>
+                        <textarea  onChange={this.props.updateStateProp} value={this.props.data}/>
+                        <h4>{this.props.data}</h4>
+                    </div>
+                );
+            }
+        }
+
+        class Message extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={data:'请填写自我描述'};
+            }
+            handleChange(event){
+                this.setState({data:event.target.value});
+            }
+
+            render(){
+                return(
+                    <Content data={this.state.data} updateStateProp={this.handleChange.bind(this)}/>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <Message/>,
+            document.getElementById('message')
+        )
+
+        // 使用 select 标签
+        class FlavorForm extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={value:'coconut'};
+            }
+            handleChange(event){
+                this.setState({value:event.target.value});
+            }
+            handleSubmit(event){
+                alert('你喜欢的风味是：'+this.state.value);
+                event.preventDefault();
+            }
+            render(){
+                return(
+                    <form onSubmit={this.handleSubmit.bind(this)}>
+                        <label>
+                            选择你喜欢的风味： {/* jsx 中的选中，自需要在 select 的 value 给定值 */}
+                            <select onChange={this.handleChange.bind(this)} value={this.state.value}>
+                                <option value="grapefruit">葡萄柚</option>
+                                <option value="lime">酸橙</option>
+                                <option value="coconut">椰子</option>
+                                <option value="mango">芒果</option>
+                            </select>
+                        </label>
+                        <input type="submit" value='提交'/>
+                        <div>{this.state.value}</div>
+                    </form>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <FlavorForm />,
+            document.getElementById('select')
+        )
+
+        class Reservation extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={isGoing:true,numberOfGuests:2};
+            }
+            handleInputChange(event){
+                const target=event.target;
+                console.log(target);
+                const value=target.type==='checkbox' ? target.checked : target.value;
+                const name=target.name;
+                this.setState({
+                    [name]:value
+                });
+            }
+            handleSubmit(event){
+                console.log(event.target);
+                event.preventDefault();
+            }
+
+            render(){
+                return(
+                    <form onSubmit={this.handleSubmit.bind(this)}>
+                        <label> 
+                            参与：
+                            <input type="checkbox" name='isGoing' checked={this.state.isGoing} onChange={this.handleInputChange.bind(this)}/>
+                        </label>
+                        <label>
+                            来宾人数：
+                            <input type="number" name='numberOfGuests' value={this.state.numberOfGuests} onChange={this.handleInputChange.bind(this)}/>
+                        </label>
+                        <input type="submit" value='提交'/>
+                    </form>
+                )
+            }
+        }
+        ReactDOM.render(
+            <Reservation/>,
+            document.getElementById('reservation')
+        )
+    </script>
+</body>
+
+</html>
