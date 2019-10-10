@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>状态提升</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+
+<body>
+    <div id="calculator"></div>
+    <div style="border: red 1px solid;" id="calculate2"></div>
+    <div id="calculate3"></div>
+    <script type="text/babel">
+    function BoilingVerdict(props) {
+        if (props.celsius>=100) {
+            return <h1>the water would boil.</h1>
+        }else{
+            return <h1>the water would not boil.</h1>
+        }
+    }
+
+    class Calculater extends React.Component{
+        constructor(props){
+            super(props);
+            this.handleChange=this.handleChange.bind(this);
+            this.state={temperature:''};
+        }
+
+        handleChange(e){
+            this.setState({temperature:e.target.value});
+        }
+
+        render(){
+            return(
+                <fieldset>
+                    <legend>enter temperature in Celsius:</legend>
+                    <input value={this.state.temperature} onChange={this.handleChange}/>
+                    <BoilingVerdict celsius={parseFloat(this.state.temperature)}/>
+                </fieldset>
+           )
+        }
+    }
+    ReactDOM.render(
+        <Calculater/>,
+        document.getElementById('calculator')
+    )
+
+    // 使用两个输入框， 使用这种方式产生的两个 输入框有不同的 state,在一个输入框输入 另一个输入框不会改变
+    const scaleNames={c:'Celsius',f:'Fahrenheit'};
+    class CalculateInput extends React.Component{
+        constructor(props){
+            super(props);
+            this.handleChange=this.handleChange.bind(this);
+            this.state={temperature:''};
+        }
+
+        handleChange(e){
+            this.setState({temperature:e.target.value});
+        }
+        render(){
+            const temperature= this.state.temperature;
+            const scale=this.props.scale;
+            return(
+                <fieldset>
+                    <legend>enter temperature in {scaleNames[scale]}</legend>
+                    <input value={temperature} onChange={this.handleChange}/>
+                </fieldset>
+            )
+        }
+    }
+
+    class Calculate2 extends React.Component{
+        render(){
+            return(
+                <div>
+                    <CalculateInput scale='c'/>
+                    <CalculateInput scale='f'/>
+                </div>
+            )
+        }
+    }
+
+    
+    ReactDOM.render(
+        <Calculate2/>,
+        document.getElementById('calculate2')
+    )
+    // 转换为摄氏度
+    function toCelsius(fahrenheit) {
+        return (fahrenheit-32)*5/9;
+    }
+
+    // 转换为华氏度
+    function toFahrenheit(celsius) {
+        return (celsius*9/5)+32;
+    }
+    // 进行摄氏度和华氏度转换
+    function tryConvert(temperature,convert) {
+        const input=parseFloat(temperature);
+        if (Number.isNaN(input)) {
+            return '';
+        }
+        const output=convert(input);
+        const rounded=Math.round(output*1000)/1000;
+        return rounded.toString();
+    }
+
+    class CalculateInput2 extends React.Component{
+        constructor(props){
+            super(props);
+            this.handleChange=this.handleChange.bind(this);
+        }
+
+        handleChange(e){
+            this.props.onTemperatureChange(e.target.value);
+        }
+        render(){
+            const temperature = this.props.temperature;
+            const scale=this.props.scale;
+            return(
+                <fieldset>
+                    <legend>enter temperature in {scaleNames[scale]}</legend>
+                    <input value={temperature} onChange={this.handleChange}/>
+                </fieldset>
+            )
+        }
+    }
+
+    // 进行状态提升，将原有的两个 Temperature 组件的状态 提升到Calculate3 中
+    class Calculate3 extends React.Component{
+        constructor(props){
+            super(props);
+            this.state={temperature:'',scale:'c'};
+            this.handleCelsiusChange=this.handleCelsiusChange.bind(this);
+            this.handleFahrenheitChange=this.handleFahrenheitChange.bind(this);
+        }
+        handleCelsiusChange(temperature){
+            this.setState({temperature: temperature,scale:'c'});
+        }
+
+        handleFahrenheitChange(temperature){
+            this.setState({temperature: temperature,scale:'f'});
+        }
+
+        render(){
+            const scale=this.state.scale;
+            const temperature = this.state.temperature;
+            const celsius = scale==='f'?tryConvert(temperature,toCelsius):temperature;
+            const fahrenheit = scale ==='c'?tryConvert(temperature,toFahrenheit):temperature;
+            return(
+                <div>
+                    <CalculateInput2 scale='c' temperature={celsius} onTemperatureChange={this.handleCelsiusChange}/>
+                    <CalculateInput2 scale='f' temperature={fahrenheit} onTemperatureChange={this.handleFahrenheitChange}/>
+                    <BoilingVerdict celsius={parseFloat(celsius)}/>
+                </div>
+            )
+        }
+    }
+
+    ReactDOM.render(
+        <Calculate3/>,
+        document.getElementById('calculate3')
+    )
+
+    </script>
+</body>
+
+</html>
