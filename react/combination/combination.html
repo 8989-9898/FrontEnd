@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>使用 react 组合</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        body>div {
+            margin-top: 10px;
+        }
+
+        .FancyBorder {
+            padding: 10px 10px;
+            border: 10px solid;
+        }
+
+        .FancyBorder-green {
+            border-color: green;
+        }
+
+        .FancyBorder-pink {
+            border-color: pink;
+        }
+
+        .FancyBorder-gray {
+            border-color: gray;
+        }
+
+        .Dialog-title {
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .Dialog-message {
+            font-size: larger;
+        }
+
+        #sidebar {
+            width: 100%;
+            height: 300px;
+        }
+
+        .SplitPane {
+            width: 100%;
+            height: 100%;
+        }
+
+        .SplitPane-left {
+            float: left;
+            width: 30%;
+            height: 100%;
+        }
+
+        .SplitPane-right {
+            float: left;
+            width: 70%;
+            height: 100%;
+        }
+
+        .Contacts {
+            width: 100%;
+            height: 100%;
+            background: lightblue;
+        }
+
+        .Chat {
+            width: 100%;
+            height: 100%;
+            background: pink;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="welcome"></div>
+    <div id="sidebar"></div>
+    <div id="message2"></div>
+    <div id="dialog"></div>
+    <script type="text/babel">
+        // 包含关系 使用特殊的 props.children 获取传入的子组件
+        function FancyBorder(props) {
+            return (
+                <div className={'FancyBorder FancyBorder-'+props.color}>
+                    {props.children}
+                </div>
+            )
+        }
+        function WelcomeDialog() {
+            return(
+                <FancyBorder color='green'>
+                    <h1 className='Dialog-title'>Welcome</h1>
+                    <p className='Dialog-message'>Thank you for visiting our spacecraft!</p>
+                </FancyBorder>
+            )
+        }
+        ReactDOM.render(
+            <WelcomeDialog/>,
+            document.getElementById('welcome')
+        )
+
+        // 不使用 props.children 的组合方式
+        function Contacts() {
+            return <div className='Contacts'></div>
+        }
+
+        function Chat() {
+            return <div className='Chat'> </div>
+        }
+
+        function SplitPane(props) {
+            return(
+                <div className='SplitPane'>
+                    <div className='SplitPane-left'>
+                        {props.left}
+                    </div>
+                    <div className='SplitPane-right'>
+                        {props.right}
+                    </div>
+                </div>
+            )
+        }
+
+        function App() {
+            return(
+                <SplitPane left={<Contacts/>} right={<Chat/>}/>
+            )
+        }
+
+        ReactDOM.render(
+            <App/>,
+            document.getElementById('sidebar')
+        )
+
+        // 特例关系
+        function Dialog(props) {
+            return(
+                <FancyBorder color='pink'>
+                    <h1 className='Dialog-title'>{props.title}</h1>
+                    <p className='Dialog-message'>{props.message}</p>
+                </FancyBorder>
+            )
+        }
+
+        function DialogMessage() {
+            return(
+                <Dialog title='Welcome' message='Thank you for visiting our spacecraft!'/>
+            )
+        }
+
+        ReactDOM.render(
+            <DialogMessage/>,
+            document.getElementById('message2')
+        )
+        // 使用 class 实现组合
+        function Dialog2(props) {
+            return(
+                <FancyBorder color='gray'>
+                    <h1 className='Dialog-title'>{props.title}</h1>
+                    <p className='Dialog-message'>{props.message}</p>
+                    {props.children}
+                </FancyBorder>
+            )
+        }
+
+        class SignUpDialog extends React.Component{
+            constructor(props){
+                super(props);
+                this.handleChange=this.handleChange.bind(this);
+                this.handleSignUp=this.handleSignUp.bind(this);
+                this.state={login:''};
+            }
+            handleChange(e){
+                this.setState({login:e.target.value});
+            }
+            handleSignUp(){
+                const login=this.state.login;
+                alert('Welcome aboard , '+login+'!');
+            }
+
+            render(){
+                return(
+                    <Dialog2 title='Mars Exploration Program' message='How should we refer to you?'>
+                        <input value={this.state.login} onChange={this.handleChange}/>
+                        <button onClick={this.handleSignUp}>Sign Me Up!</button>
+                    </Dialog2>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <SignUpDialog/>,
+            document.getElementById('dialog')
+        )
+    </script>
+</body>
+
+</html>
