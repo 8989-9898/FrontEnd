@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>使用列表&Keys</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="list"></div>
+    <hr>
+    <div id="list2"></div>
+    <hr>
+    <div id="list3"></div>
+    <hr>
+    <div id="list4"></div>
+    <hr>
+    <div id="brother"></div>
+    <script type='text/babel'>
+        // 使用数组的 map 方法生成多个 li 标签
+        const numbers=[1,2,3,4,5];
+        const elements=numbers.map((number)=>
+            <li key={number.toString()}>{number}</li>
+        );
+        ReactDOM.render(
+            <ul>{elements}</ul>,
+            document.getElementById('list')
+        )
+        // 将列表封装成组件，必须添加 key 否则会报警告。 key 不会显示出来
+        function NumberList(props) {
+            const numbers=props.numbers;
+            const elements=numbers.map((number)=>
+                <li key={number.toString()}>{number}</li>
+            );
+            return (
+                <ul>{elements}</ul>
+            );
+        }
+        ReactDOM.render(
+            <NumberList numbers={numbers}/>,
+            document.getElementById('list2')
+        )
+
+        // key 的作用，用于帮助 react 识别哪些元素改变了，比如修改、删除。 key 最好是一个唯一的字符 id 在没有
+        // 如没有 唯一的id 时，可以使用序号
+        function NumberList2(props) {
+            const numbers=props.numbers;
+            const elements=numbers.map((number,index)=>
+                <li key={index}>{number}</li>
+            );
+            return(
+                <ul>{elements}</ul>
+            );
+        }
+        ReactDOM.render(
+            <NumberList2 numbers={numbers}/>,
+            document.getElementById('list3')
+        )
+
+        // 用key 提取组件
+        function ListItem(props) {
+            const value=props.value;
+                /* 该种方式错误，不能再这里指定 key，而是在就近的数字上下文中才有效 */
+                /* <li key={value.toString()}>{value}</li> */
+            return(
+                <li>{value}</li>
+            )
+        }
+        function NumberList3(props) {
+            const numbers = props.numbers;
+            // 元素的 key 必须在这里指定
+            const elements=numbers.map((number)=>
+                <ListItem value={number} key={number.toString()}/>
+            );
+            return(
+                <ul>{elements}</ul>
+            )
+        }
+        ReactDOM.render(
+            <NumberList3 numbers={numbers}/>,
+            document.getElementById('list4')
+        )
+
+        // key 只是在兄弟节点之间必须唯一
+        function Blog(props) {
+            // 可以在 jsx 中使用 map()
+            const sidebar=(
+                <ul>
+                    {props.posts.map((post)=>
+                        <li key={post.id}>{post.title}</li>
+                    )}
+                </ul>
+            );
+            const content=props.posts.map((post)=>
+                <div key={post.id}>
+                    <h3>{post.title}</h3>
+                    <p>{post.content}</p>
+                </div>
+            );
+
+            return(
+                <div>
+                    {sidebar}
+                    <hr/>
+                    {content}
+                </div>
+            );
+        };
+        var posts=[{id:1,title:'hello world',content:'welcome to learning react'},{id:2,title:'installation',content:'you can install react from npm.'}];
+        ReactDOM.render(
+            <Blog posts={posts} />,
+            document.getElementById('brother')
+        );
+    </script>
+</body>
+
+</html>
