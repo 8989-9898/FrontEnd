@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>组件的生命周期</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="incr"></div>
+    <script type='text/babel'>
+        class Button extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={data:0};
+                this.handleIncrement=this.handleIncrement.bind(this);
+            }
+            handleIncrement(){
+                this.setState({data:this.state.data+1});
+            }
+
+            render(){
+                return(
+                    <div>
+                        <button onClick={this.handleIncrement}>自增</button>
+                        <Content myInput={this.state.data}/>
+                    </div>
+                )
+            }
+        }
+
+        class Content extends React.Component{
+            componentWillMount(){
+                console.log('1在渲染前调用，在客户端也在服务端 componentWillMount');
+            }
+
+            componentDidMount(){
+                console.log('2在组件第一次渲染时调用，在客户端，只执行一次 componentDidMount ');
+            }
+
+            componentWillReceiveProps(){
+                console.log('3在组件接收到一个新的更新时执行（props） componentWillReceiveProps');
+            }
+
+            shouldComponentUpdate(){
+                console.log('4返回一个boolean 值，在组件接收到 state 或 props 时被调用 shouldComponentUpdate');
+                return true;
+            }
+
+            componentWillUpdate(){
+                console.log('5在组件接收到新的 props或 state 但还没有 render 是调用，在初始化时不会执行 componentWillUpdate');
+            }
+
+            componentDidUpdate(){
+                console.log('6在组件完成更新时调用，在初始化时不会调用 componentDidUpdate');
+            }
+
+            componentWillUnmount(){
+                console.log('7在组件从 DOM 中移除是被调用 componentWillUnmount');
+            }
+
+
+            render (){
+                return(
+                    <div>
+                        <h2>{this.props.myInput}</h2>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <Button/>,
+            document.getElementById('incr')
+        )
+
+    </script>
+</body>
+
+</html>
