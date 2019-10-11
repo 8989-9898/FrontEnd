@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>react 哲学</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script type="text/babel">
+        const PRODUCTS = [
+            {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
+            {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
+            {category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
+            {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
+            {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
+            {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
+        ];
+
+        /**
+         * 创建种类一行 
+         */
+        class ProductCategoryRow extends React.Component{
+            render(){
+                const category = this.props.category;
+                return(
+                    <tr>
+                        <th colSpan='2'>{category}</th>
+                    </tr>
+                )
+            }
+        }
+        /**
+         * 创建商品一行
+        */
+        class ProductRow extends React.Component{
+            render(){
+                const product =this.props.product;
+                const name = product.stocked ? product.name : <span style={{color:'red'}}>{product.name}</span>;
+                return(
+                    <tr>
+                        <td>{name}</td>
+                        <td>{product.price}</td>
+                    </tr>
+                )
+            }
+        }
+
+        class ProductTable extends React.Component{
+            render(){
+                const filterText=this.props.filterText;
+                const isStockOnly=this.props.isStockOnly;
+
+                const rows=[];
+                let lastCategory=null;
+                this.props.products.forEach((product)=>{
+                    if (product.name.indexOf(filterText)===-1) {
+                        return;
+                    }
+                    if (isStockOnly && !product.stocked) {
+                        return;
+                    }
+                    if (product.category!==lastCategory) {
+                        // 添加分类行
+                        rows.push(
+                            <ProductCategoryRow category={product.category} key={product.category}/>
+                        )
+                    }
+                    // 添加商品行
+                    rows.push(
+                        <ProductRow product={product} key={product.name}/>
+                    );
+                    lastCategory=product.category;
+                });
+
+                return(
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>{rows}</tbody>
+                    </table>
+                )
+            }
+        }
+
+        class SearchBar extends React.Component{
+            constructor(props){
+                super(props);
+                this.handleFilterTextChange=this.handleFilterTextChange.bind (this);
+                this.handleIsStockOnlyChange=this.handleIsStockOnlyChange.bind(this);
+            }
+            handleFilterTextChange(e){
+                this.props.onFilterChange(e.target.value);
+            }
+            handleIsStockOnlyChange(e){
+                this.props.onOnlyChange(e.target.checked);
+            }
+            render(){
+                const filterText=this.props.filterText;
+                const isStockOnly=this.props.isStockOnly;
+                return(
+                    <form>
+                        <input type="text" value={filterText} placeholder='search...' onChange={this.handleFilterTextChange}/>
+                        <p>
+                            <input checked={isStockOnly} type="checkbox" onChange={this.handleIsStockOnlyChange}/>{' '} Only show products in stock 
+                        </p>
+                    </form>
+                )
+            }
+        }
+
+        class FilterableProductTable extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={
+                    filterText:'',
+                    isStockOnly:false
+                }
+                this.handleFilterTextChange=this.handleFilterTextChange.bind(this);
+                this.handleIsStockOnlyChange=this.handleIsStockOnlyChange.bind(this);
+            }
+            handleFilterTextChange(filter){
+                this.setState({filterText:filter});
+            }
+            handleIsStockOnlyChange(only){
+                console.log(only);
+                this.setState({isStockOnly:only});
+            }
+            render(){
+                return(
+                    <div>
+                        <SearchBar filterText={this.state.filterText} isStockOnly={this.state.isStockOnly} onFilterChange={this.handleFilterTextChange} onOnlyChange={this.handleIsStockOnlyChange}/>
+                        <ProductTable products={this.props.products} filterText={this.state.filterText} isStockOnly={this.state.isStockOnly}/>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <FilterableProductTable products={PRODUCTS} />,
+            document.getElementById('container')
+        )
+    </script>
+</body>
+
+</html>

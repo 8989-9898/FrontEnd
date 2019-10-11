@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>react 使用 ajax 请求</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="weather"></div>
+
+    <div id="example"></div>
+    <script type='text/babel'>
+    class Weather extends React.Component{
+        constructor(props){
+            super(props);
+            this.state={
+                "temp": 0,
+                "pressure": 0,
+                "humidity": 0,
+                "temp_min": 0,
+                "temp_max": 0
+            }
+        }
+
+        componentDidMount(){
+            $.get(this.props.source,(result)=>{
+                var main=result['main'];
+                this.setState({
+                    "temp": main.temp,
+                    "pressure": main.pressure,
+                    "humidity": main.humidity,
+                    "temp_min": main.temp_min,
+                    "temp_max": main.temp_max
+                }).bind(this);
+            });
+        }
+        render(){
+            return(
+                <div>
+                    伦敦天气
+                    <p>温度:{this.state.temp}</p>
+                    <p>压力:{this.state.pressure}</p>
+                    <p>湿度:{this.state.humidity}</p>
+                    <p>最小温度:{this.state.temp_min}</p>
+                    <p>最大温度:{this.state.temp_max}</p>
+                </div>
+            )
+        }
+    }
+
+    ReactDOM.render(
+        <Weather source='https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b6907d289e10d714a6e88b30761fae22'/>,
+        document.getElementById('weather')
+    )
+
+
+    class UserGist extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {username: '', lastGistUrl: ''};
+        }
+
+ 
+    componentDidMount() {
+        this.serverRequest = $.get(this.props.source, function (result) {
+        var lastGist = result[0];
+        this.setState({
+            username: lastGist.owner.login,
+            lastGistUrl: lastGist.html_url
+        });
+        }.bind(this));
+    }
+    
+    componentWillUnmount() {
+        this.serverRequest.abort();
+    }
+    
+    render() {
+        return (
+        <div>
+            {this.state.username} 用户最新的 Gist 共享地址：
+            <a href={this.state.lastGistUrl}>{this.state.lastGistUrl}</a>
+        </div>
+        );
+    }
+    }
+    
+    ReactDOM.render(
+    <UserGist source="https://api.github.com/users/octocat/gists" />,
+    document.getElementById('example')
+    );
+
+    </script>
+</body>
+
+</html>
