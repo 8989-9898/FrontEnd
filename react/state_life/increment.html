@@ -65,6 +65,12 @@
                 console.log('7在组件从 DOM 中移除是被调用 componentWillUnmount');
             }
 
+            componentDidCatch(error,info){
+                console.log('8定义错误边界，只能捕获子组件的错误，无法捕获自身的错误， componentDidCatch');
+                console.log(error);
+                console.log(info);
+            }
+
 
             render (){
                 return(
