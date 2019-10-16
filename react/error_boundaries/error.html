@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>react 的错误边界</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="root">定义错误边界</div>
+    <script type="text/babel">
+        class ErrorBoundary extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={error:null,info:null};
+            }
+            // 定义错误边界
+            componentDidCatch(error,info){
+                this.setState({
+                    error:error,
+                    info:info
+                });
+            }
+            render(){
+                if (this.state.info) {
+                    return(
+                        <div>
+                            <h2>Something went wrong.</h2>
+                            <details style={{whiteSpace:'pre-wrap'}}>
+                                {this.state.error && this.state.error.toString()}
+                                <br/>
+                                {this.state.info.componentStack}
+                            </details>
+                        </div>
+                    )
+                }
+                return this.props.children;
+            }
+        }
+
+        class BuggyCounter extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={counter:0};
+                this.handleClick=this.handleClick.bind(this);
+            }
+
+            handleClick(){
+                this.setState(({counter})=>({
+                    counter:counter+1
+                }));
+            }
+
+            render(){
+                if (this.state.counter===5) {
+                    throw new Error('手动抛出错误');
+                }
+                return <h1 onClick={this.handleClick}>{this.state.counter}</h1>
+            }
+        }
+        function App() {
+            return (
+                <div>
+                    <p>
+                        <b>
+                            这是React16 的错误边界（Error Boundaries）<br/><br/>
+                            点击数字实现自增 <br/>
+                            程序计数器在自增到 5 时，使用 JavaScript 手动抛出错误
+                        </b>
+                    </p>
+                    <hr/>
+                    <ErrorBoundary>
+                        <p>这两个程序计数器位于一样的错误边界，一个报错或者崩溃，错误边界将同时替换他们两个</p>
+                        <BuggyCounter/>
+                        <BuggyCounter/>
+                    </ErrorBoundary>
+                    <hr/>
+                    <p>这两个程序计数器位于不同的错误边界，如果一个报错或者崩溃，另一个不会受影响</p>
+                    <ErrorBoundary><BuggyCounter/></ErrorBoundary>
+                    <ErrorBoundary><BuggyCounter/></ErrorBoundary>
+                </div>
+            )
+        }
+
+        ReactDOM.render(
+            <App/>,
+            document.getElementById('root')
+        )
+    </script>
+</body>
+
+</html>
